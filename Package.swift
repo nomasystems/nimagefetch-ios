@@ -39,6 +39,9 @@ let package = Package(
             path: "Sources/Swift"),
         .testTarget(
             name: "NMAImageFetchTests",
-            dependencies: ["NMAImageFetch", "NMAImageFetchSwift"]),
+            dependencies: ["NMAImageFetch", "NMAImageFetchSwift"],
+            resources: [
+                .copy("Mocks"),
+            ])
     ]
 )
