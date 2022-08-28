@@ -5,11 +5,12 @@ import PackageDescription
 
 let package = Package(
     name: "NMAImageFetch",
+    platforms: [.iOS(.v12)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "NMAImageFetch",
-            targets: ["NMAImageFetch"]),
+            targets: ["NMAImageFetch", "NMAImageFetchSwift"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -20,9 +21,24 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "NMAImageFetch",
-            dependencies: []),
+            dependencies: [],
+            path: "Sources/Objc",
+            publicHeadersPath: "Public",
+        cSettings: [
+            .headerSearchPath("**")],
+        linkerSettings: [
+            .linkedFramework("Foundation"),
+            .linkedFramework("CoreGraphics"),
+            .linkedFramework("ImageIO"),
+            .linkedFramework("CoreServices"),
+            .linkedFramework("UIKit", .when(platforms: [.iOS])),
+        ]),
+        .target(
+            name: "NMAImageFetchSwift",
+            dependencies: ["NMAImageFetch"],
+            path: "Sources/Swift"),
         .testTarget(
             name: "NMAImageFetchTests",
-            dependencies: ["NMAImageFetch"]),
+            dependencies: ["NMAImageFetch", "NMAImageFetchSwift"]),
     ]
 )
