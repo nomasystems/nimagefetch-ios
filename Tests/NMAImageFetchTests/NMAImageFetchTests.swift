@@ -108,7 +108,7 @@ final class NMAImageFetchTests: XCTestCase {
                 }
             }
         }
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: 5)
     }
 
     func testPNGLoadingWithDownsampledSize() throws {
