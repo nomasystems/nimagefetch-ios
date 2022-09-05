@@ -8,6 +8,7 @@
 #import "NImageFetchMemoryCache.h"
 #import "NImageFetchDecode.h"
 #import "NImageFetchFileCache.h"
+#import "NImageVectorDecoder.h"
 
 @interface NImageFetchRequest ()
 @property (readwrite, nonatomic) NSURLRequest *urlRequest;
@@ -132,20 +133,20 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
                                                                   scale:request.scale
                                                       shouldDecodeAsPdf:&shouldDecodeAsPdf];
             
-//            if(!imageInFileCache && shouldDecodeAsPdf) {
-//                // First check the disk cache for a renderered image file of the pdf with the desired size
-//                NSURL *prerenderedPdfFileCacheUrl = [self.fileCache cacheFileURLForRenderedPdfWithSourceURL:request.urlRequest.URL size:request.pointSize scale:request.scale];
-//                imageInFileCache = [NImageFetchDecode decodeImageAtLocation:prerenderedPdfFileCacheUrl pointSize:CGSizeZero scale:1 shouldDecodeAsPdf:&shouldDecodeAsPdf];
-//
-//                if(!imageInFileCache) {
-//                    // Try to render from pdf in disk cache
-//                    UIImage * renderedPdfImage = [ImageVectorDecoder drawPDFFromURL:fileCacheURL targetWidthInPoints:request.pointSize.width];
-//                    if(renderedPdfImage) {
-//                        imageInFileCache = renderedPdfImage;
-//                        [self.fileCache saveRenderedPdfImage:renderedPdfImage size:request.pointSize scale:request.scale sourceUrl:request.urlRequest.URL];
-//                    }
-//                               }
-//            }
+            if(!imageInFileCache && shouldDecodeAsPdf) {
+                // First check the disk cache for a renderered image file of the pdf with the desired size
+                NSURL *prerenderedPdfFileCacheUrl = [self.fileCache cacheFileURLForRenderedPdfWithSourceURL:request.urlRequest.URL size:request.pointSize scale:request.scale];
+                imageInFileCache = [NImageFetchDecode decodeImageAtLocation:prerenderedPdfFileCacheUrl pointSize:CGSizeZero scale:1 shouldDecodeAsPdf:&shouldDecodeAsPdf];
+
+                if(!imageInFileCache) {
+                    // Try to render from pdf in disk cache
+                    UIImage * renderedPdfImage = [NImageVectorDecoder drawPDFfromURL:fileCacheURL targetWidthInPoints:request.pointSize.width];
+                    if(renderedPdfImage) {
+                        imageInFileCache = renderedPdfImage;
+                        [self.fileCache saveRenderedPdfImage:renderedPdfImage size:request.pointSize scale:request.scale sourceUrl:request.urlRequest.URL];
+                    }
+                               }
+            }
             
             if(imageInFileCache && request.urlRequest.cachePolicy != NSURLRequestReloadIgnoringCacheData) {
                 [self callAsyncCompletionForImageFetchTask:imageFetchTask image:imageInFileCache error:nil];
@@ -279,16 +280,16 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
                      fileCacheURL:(NSURL*)fileCacheURL
                    memoryCacheKey:(NSString*)memoryCacheKey
 {
-//    UIImage * renderedPdfImage = [ImageVectorDecoder drawPDFFromURL:fileCacheURL targetWidthInPoints:request.pointSize.width];
-//    if (renderedPdfImage) {
-//        [self.fileCache saveRenderedPdfImage:renderedPdfImage size:request.pointSize scale:request.scale sourceUrl:request.urlRequest.URL];
-//        [self callAsyncCompletionForImageFetchTask:imageFetchTask image:renderedPdfImage error:nil];
-//        [self.memoryCache cacheImage:renderedPdfImage forKey:memoryCacheKey];
-//    } else {
-//        [self.fileCache removeFileAtURL:fileCacheURL];
-//        NSError *fetchError = [NImageFetchError errorWithCode:NImageFetchOtherError url:request.urlRequest.URL underlyingError:nil];
-//        [self callAsyncCompletionForImageFetchTask:imageFetchTask image:nil error:fetchError];
-//    }
+    UIImage * renderedPdfImage = [NImageVectorDecoder drawPDFfromURL:fileCacheURL targetWidthInPoints:request.pointSize.width];
+    if (renderedPdfImage) {
+        [self.fileCache saveRenderedPdfImage:renderedPdfImage size:request.pointSize scale:request.scale sourceUrl:request.urlRequest.URL];
+        [self callAsyncCompletionForImageFetchTask:imageFetchTask image:renderedPdfImage error:nil];
+        [self.memoryCache cacheImage:renderedPdfImage forKey:memoryCacheKey];
+    } else {
+        [self.fileCache removeFileAtURL:fileCacheURL];
+        NSError *fetchError = [NImageFetchError errorWithCode:NImageFetchOtherError url:request.urlRequest.URL underlyingError:nil];
+        [self callAsyncCompletionForImageFetchTask:imageFetchTask image:nil error:fetchError];
+    }
 }
 
 - (void)callAsyncCompletionForImageFetchTask:(NImageFetchTaskI *)imageFetchTask
