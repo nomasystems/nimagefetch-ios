@@ -16,7 +16,7 @@
 
 ## Usage
 
-### Loading images using a NImageFetchView(subclass of UIImageView)
+### Loading an image using a NImageFetchView(subclass of UIImageView)
 
 ```swift
 let imageView: NImageFetchView = .init(frame: .zero)
@@ -24,7 +24,7 @@ let imageView: NImageFetchView = .init(frame: .zero)
 imageView.setImage(from: URLRequest(url: url))
 ```
 
-### Loading images using an UIImageView
+### Loading an image using an UIImageView
 ```swift
 let imageView: UIImageView = .init(frame: .zero)
 
