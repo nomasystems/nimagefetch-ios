@@ -34,6 +34,23 @@
     }
 ```
 
+### SwiftUI
+
+### Load image from URL
+```swift
+ImageFetchView(url: url, animated: .always, fallbackImage: nil)
+```
+
+### Load image from URLRequest
+```swift
+ImageFetchView(urlRequest: URLRequest(url: url), animated: .ifAsync, fallbackImage: UIImage(named: "..."))
+```
+
+### Load image from ImageFetchRequest
+```swift
+ImageFetchView(imageFetchRequest: ImageFetchRequest(urlRequest: URLRequest(url: url)), animated: .never, fallbackImage: nil)
+```
+
 ## Support
 
 Any doubt or suggestion? Please check out [our issue tracker](https://github.com/nomasystems/nimagefetch-ios/issues).
