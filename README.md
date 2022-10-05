@@ -16,22 +16,49 @@
 
 ## Usage
 
-### Swift
+### Loading an image using a NImageFetchView(subclass of UIImageView)
 
 ```swift
-    let imageFetchRequest = ImageFetchRequest(urlRequest: URLRequest(url: url))
-    let pointSize = CGSize(width: 100, height: 100)
-    imageFetchRequest.pointSize = pointSize
-    let imageFetchTask = imageFetch.requestImage(imageFetchRequest) { result in
-        switch result {
-        case .success(let uiImage, _flags):
+let imageView: NImageFetchView = .init(frame: .zero)
+
+imageView.setImage(from: URLRequest(url: url))
+```
+
+### Loading an image using an UIImageView
+```swift
+let imageView: UIImageView = .init(frame: .zero)
+
+let imageFetchRequest = ImageFetchRequest(urlRequest: URLRequest(url: url))
+_ = ImageFetch.shared.requestImage(imageFetchRequest) { result in
+    switch result {
+        case let .success(uiImage, _):
+            self.imageView.image = uiImage
         case .failure(let error):
             switch error {
-            case .cancelled: // The request had been cancelled.
-            case .networkError(Error?) // The request could not be finished.
+                case .cancelled:
+                    break
+                case let .networkError(err):
+                    print(err?.localizedDescription ?? "unknown network error")
             }
-        }
     }
+}
+```
+### Cancel loading
+
+```swift
+let imageView: UIImageView = .init(frame: .zero)
+
+let imageFetchRequest = ImageFetchRequest(urlRequest: URLRequest(url: url))
+let task = ImageFetch.shared.requestImage(fetchRequest) { _ in }
+if let task = task {
+    ImageFetch.shared.cancel(task)
+}
+```
+
+### Clear caches
+
+```swift
+ImageFetch.shared.purgeCaches()
 ```
 
 ## Support
