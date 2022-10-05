@@ -1,6 +1,6 @@
 # NMAImageFetch
 
-`NMAImageFetch` is library for downloading and caching images efficiently using `UIKit`.
+`NMAImageFetch` is library for downloading and caching images efficiently using `UIKit` or `SwiftUI`.
 
 ## Prerequisites
 
