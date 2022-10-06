@@ -1,6 +1,6 @@
 # NMAImageFetch
 
-`NMAImageFetch` is library for downloading and caching images efficiently using `UIKit`.
+`NMAImageFetch` is library for downloading and caching images efficiently using `UIKit` or `SwiftUI`.
 
 ## Prerequisites
 
@@ -59,6 +59,23 @@ if let task = task {
 
 ```swift
 ImageFetch.shared.purgeCaches()
+```
+
+### SwiftUI
+
+### Load image from URL
+```swift
+ImageFetchView(url: url, animated: .always, fallbackImage: nil)
+```
+
+### Load image from URLRequest
+```swift
+ImageFetchView(urlRequest: URLRequest(url: url), animated: .ifAsync, fallbackImage: UIImage(named: "..."))
+```
+
+### Load image from ImageFetchRequest
+```swift
+ImageFetchView(imageFetchRequest: ImageFetchRequest(urlRequest: URLRequest(url: url)), animated: .never, fallbackImage: nil)
 ```
 
 ## Support
