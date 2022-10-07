@@ -5,12 +5,17 @@ import NMAImageFetch
 
 extension NImageFetchView {
     
-    public func setImage(_ request: ImageFetchRequest, animated: NImageFetchViewAnimated = .ifAsync, fallbackImage: UIImage? = nil) {
-        self.__setImageFrom(request, animated: animated, fallbackImage: fallbackImage)
+    public func setImage(_ request: ImageFetchRequest,
+                         animated: NImageFetchViewAnimated = .ifAsync,
+                         fallbackImage: UIImage? = nil,
+                         completion: NImageFetchViewCompletion? = nil) {
+        self.__setImageFrom(request, animated: animated, fallbackImage: fallbackImage, completion: completion)
     }
     
-    public func setImage(from urlRequest: URLRequest, animated: NImageFetchViewAnimated = .ifAsync) {
-        self.__setImageFrom(urlRequest, animated: animated)
+    public func setImage(from urlRequest: URLRequest,
+                         animated: NImageFetchViewAnimated = .ifAsync,
+                         completion: NImageFetchViewCompletion? = nil) {
+        self.__setImageFrom(urlRequest, animated: animated, completion: completion)
     }
     
 }
