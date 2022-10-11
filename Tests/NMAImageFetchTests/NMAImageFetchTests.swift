@@ -132,7 +132,7 @@ final class NMAImageFetchTests: XCTestCase {
         waitForExpectations(timeout: 1)
     }
 
-    func testImageFetchView() {
+    func testImageFetchViewWithoutCompletion() {
         let url = Bundle.module.url(forResource: "Mocks/Image", withExtension: "png")!
         let expectedImage = UIImage(contentsOfFile: url.path)
         let superView = UIView() //Added as subview to test animation launched
@@ -146,6 +146,21 @@ final class NMAImageFetchTests: XCTestCase {
         } else {
             XCTFail("Delay interrupted")
         }
+    }
+
+    func testImageFetchViewWithCompletion() {
+        let url = Bundle.module.url(forResource: "Mocks/Image", withExtension: "png")!
+        let expectedImage = UIImage(contentsOfFile: url.path)
+        let superView = UIView() //Added as subview to test animation launched
+        let imageFetchView = NImageFetchView(frame: CGRect(origin: .zero, size: CGSize(width: 100, height: 100)))
+        superView.addSubview(imageFetchView)
+        let imageExpectation = expectation(description: "View fetch image")
+        imageFetchView.setImage(from: URLRequest(url: url), animated: .always) {maybeError in
+            imageExpectation.fulfill()
+            XCTAssertNil(maybeError)
+            XCTAssertEqual(imageFetchView.image?.pngData(), expectedImage?.pngData())
+        }
+        waitForExpectations(timeout: 1)
     }
 }
 
