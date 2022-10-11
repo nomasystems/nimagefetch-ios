@@ -17,7 +17,6 @@
 - (void)dealloc
 {
     /* Do not notify delegate while deallocating */
-    self.imageFetchViewDelegate = nil;
     [self cancelLoading];
 }
 
@@ -31,14 +30,17 @@
     [super setImage:image];
 }
 
-- (void)setImageFromRequest:(NImageFetchRequest*)request animated:(NImageFetchViewAnimated)animated
+- (void)setImageFromRequest:(NImageFetchRequest*)request
+                   animated:(NImageFetchViewAnimated)animated
+                 completion:(nullable NImageFetchViewCompletion)completion
 {
-    [self setImageFromRequest:request animated:animated fallbackImage:nil];
+    [self setImageFromRequest:request animated:animated fallbackImage:nil completion:completion];
 }
 
 - (void)setImageFromRequest:(NImageFetchRequest*)request
                    animated:(NImageFetchViewAnimated)animated
               fallbackImage:(UIImage*)fallbackImage
+                 completion:(nullable NImageFetchViewCompletion)completion
 {
     NSParameterAssert(request);
     
@@ -61,7 +63,9 @@
                                      }
                                      strongSelf.status = NImageFetchViewStatusNotLoaded;
                                      [strongSelf hideActivityIndicator];
-                                     [strongSelf notifyRequestFailedWithError:error];
+                                     if (completion != nil) {
+                                         completion(error);
+                                     }
                                  } else if(image) {
                                      [strongSelf hideActivityIndicator];
                                      [strongSelf setImage:image];
@@ -79,7 +83,9 @@
                                             strongSelf.alpha = 1.0;
                                         } completion:NULL];
                                      }
-                                     [strongSelf notifyDidSetRequestedImage];
+                                     if (completion != nil) {
+                                         completion(nil);
+                                     }
                                  } else {
                                      strongSelf.status = NImageFetchViewStatusNotLoaded;
                                      [strongSelf hideActivityIndicator];
@@ -93,10 +99,12 @@
     self.imageFetchTask = anImageFetchTask;
 }
 
-- (void)setImageFromUrlRequest:(NSURLRequest *)urlRequest animated:(NImageFetchViewAnimated)animated
+- (void)setImageFromUrlRequest:(NSURLRequest *)urlRequest
+                      animated:(NImageFetchViewAnimated)animated
+                    completion:(nullable NImageFetchViewCompletion)completion
 {
     NImageFetchRequest *request = [NImageFetchRequest requestWithUrlRequest:urlRequest];
-    [self setImageFromRequest:request animated:animated];
+    [self setImageFromRequest:request animated:animated completion:completion];
 }
 
 - (void)ensureImageIsBeingLoaded
@@ -104,25 +112,9 @@
     if ((self.status == NImageFetchViewStatusNotLoaded) &&
         (self.request) &&
         (!self.image)) {
-        [self setImageFromRequest:self.request animated:NImageFetchViewAnimatedAlways];
+        [self setImageFromRequest:self.request animated:NImageFetchViewAnimatedAlways completion:nil];
     }
 }
-
-- (void)notifyDidSetRequestedImage
-{
-    if([self.imageFetchViewDelegate respondsToSelector:@selector(imageViewDidSetRequestedImage:)]) {
-        [self.imageFetchViewDelegate imageViewDidSetRequestedImage:self];
-    }
-}
-
-
-- (void)notifyRequestFailedWithError:(NSError*)error
-{
-    if([self.imageFetchViewDelegate respondsToSelector:@selector(imageView:requestFailedWithError:)]) {
-        [self.imageFetchViewDelegate imageView:self requestFailedWithError:error];
-    }
-}
-
 
 - (void)cancelLoading
 {
