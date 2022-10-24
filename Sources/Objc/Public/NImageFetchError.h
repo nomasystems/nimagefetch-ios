@@ -7,6 +7,9 @@ NS_ASSUME_NONNULL_BEGIN
 /** NImageFetch Error Domain */
 extern NSString * const NImageFetchErrorDomain NS_SWIFT_UNAVAILABLE("Use ImageFetch.ImageFetchError instead");
 
+/** NImageFetchError status code key */
+extern NSString * const NImageFetchErrorStatusCodeKey;
+
 
 typedef NS_CLOSED_ENUM(NSInteger, NImageFetchErrorCode) {
     /** A network error occured.
@@ -25,7 +28,8 @@ NS_SWIFT_UNAVAILABLE("Use ImageFetch.ImageFetchError instead")
 
 + (NSError*)errorWithCode:(NImageFetchErrorCode)code
                       url:(nullable NSURL*)url
-          underlyingError:(nullable NSError*)underlyingError;
+          underlyingError:(nullable NSError*)underlyingError
+               statusCode:(nullable NSNumber*)statusCode;
 
 @end
 

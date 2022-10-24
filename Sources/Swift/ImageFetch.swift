@@ -8,6 +8,16 @@ extension ImageFetch  {
     public enum ImageFetchError: Error {
         case cancelled
         case networkError(Error?)
+        
+        /// Represents the http status code of the network response
+        public var statusCode: Int? {
+            switch self {
+                case .cancelled:
+                    return nil
+                case let .networkError(error):
+                    return (error as? NSError)?.userInfo[NMAImageFetch.NImageFetchErrorStatusCodeKey] as? Int
+            }
+        }
     }
     
     public enum Result {
