@@ -80,6 +80,7 @@ final class NMAImageFetchTests: XCTestCase {
                 switch error {
                 case .cancelled:
                     XCTAssertTrue(true)
+                    XCTAssertNil(error.statusCode)
                 default:
                     XCTFail()
                 }
@@ -89,8 +90,8 @@ final class NMAImageFetchTests: XCTestCase {
         waitForExpectations(timeout: 1)
     }
 
-    func testImageNotFound() {
-        let url = URL(string: "https://www.nomasystems.com/404.png")!
+    func testImageNotFound() throws {
+        let url = try XCTUnwrap(URL(string: "https://github.com/nomasystems/nimagefetch-ios/blob/main/404.png"))
         let imageFetch = ImageFetch()
         let imageFetchRequest = ImageFetchRequest(urlRequest: URLRequest(url: url))
         let expectationWithoutCaching = expectation(description: "Image request finished without caching")
@@ -105,6 +106,7 @@ final class NMAImageFetchTests: XCTestCase {
                     XCTFail()
                 case .networkError(_):
                     XCTAssertTrue(true)
+                    XCTAssertEqual(error.statusCode, 404)
                 }
             }
         }

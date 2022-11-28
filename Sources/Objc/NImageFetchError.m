@@ -3,12 +3,15 @@
 #import "NImageFetchError.h"
 
 NSString * const NImageFetchErrorDomain = @"NImageFetchErrorDomain";
+NSString * const NImageFetchErrorStatusCodeKey = @"StatusCode";
+
 
 @implementation NImageFetchError
 
 + (NSError*)errorWithCode:(NImageFetchErrorCode)code
-                      url:(NSURL*)url
-          underlyingError:(NSError*)underlyingError
+                      url:(nullable NSURL*)url
+          underlyingError:(nullable NSError*)underlyingError
+               statusCode:(nullable NSNumber*)statusCode
 {
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
     
@@ -18,6 +21,10 @@ NSString * const NImageFetchErrorDomain = @"NImageFetchErrorDomain";
     
     if(underlyingError) {
         [userInfo setObject:underlyingError forKey:NSUnderlyingErrorKey];
+    }
+    
+    if(statusCode) {
+        [userInfo setValue:statusCode forKey:NImageFetchErrorStatusCodeKey];
     }
     
     return [NSError errorWithDomain:NImageFetchErrorDomain code:code userInfo:userInfo];

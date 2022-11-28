@@ -183,7 +183,7 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
     // Some users of this function (such as NImageFetchView) are dependent on the completion block being
     // called synchronously on the main thread, so for now we need to keep the same behaviour
     if(atomic_fetch_or(&imageFetchTaskInternal->completed, true) == false) {
-        imageFetchTaskInternal.completion(nil, [NImageFetchError errorWithCode:NImageFetchCancelledError url:nil underlyingError:nil], 0);
+        imageFetchTaskInternal.completion(nil, [NImageFetchError errorWithCode:NImageFetchCancelledError url:nil underlyingError:nil statusCode:nil], 0);
         // Although NSURLSessionTask cancel is thread safe, we must call cancel on the taskDispatchQueue:
         // All accesses to the task object (except completed flag and completion) must be done on the taskDispatchQueue
         dispatch_async(self.taskDispatchQueue, ^{
@@ -231,7 +231,7 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
                 NSInteger statusCode = ((NSHTTPURLResponse *)response).statusCode;
                 // Do not cache errors
                 if(statusCode < 200 || statusCode > 299) {
-                    NSError *fetchError = [NImageFetchError errorWithCode:NImageFetchOtherError url:request.urlRequest.URL underlyingError:error];
+                    NSError *fetchError = [NImageFetchError errorWithCode:NImageFetchOtherError url:request.urlRequest.URL underlyingError:error statusCode:[NSNumber numberWithInteger:statusCode]];
                     [self callAsyncCompletionForImageFetchTask:imageFetchTask image:nil error:fetchError];
                     return;
                 }
@@ -250,12 +250,12 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
                     [self decodeAsPdfImageFetchTask:imageFetchTask request:request fileCacheURL:fileCacheURL memoryCacheKey:memoryCacheKey];
                 } else {
                     [self.fileCache removeFileAtURL:fileCacheURL];
-                    NSError *fetchError = [NImageFetchError errorWithCode:NImageFetchOtherError url:request.urlRequest.URL underlyingError:error];
+                    NSError *fetchError = [NImageFetchError errorWithCode:NImageFetchOtherError url:request.urlRequest.URL underlyingError:error statusCode:nil];
                     [self callAsyncCompletionForImageFetchTask:imageFetchTask image:nil error:fetchError];
                 }
             }
         } else {
-            NSError *fetchError = [NImageFetchError errorWithCode:NImageFetchNetworkError url:request.urlRequest.URL underlyingError:error];
+            NSError *fetchError = [NImageFetchError errorWithCode:NImageFetchNetworkError url:request.urlRequest.URL underlyingError:error statusCode:nil];
             [self callAsyncCompletionForImageFetchTask:imageFetchTask image:nil error:fetchError];
         }
     }];
@@ -287,7 +287,7 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
         [self.memoryCache cacheImage:renderedPdfImage forKey:memoryCacheKey];
     } else {
         [self.fileCache removeFileAtURL:fileCacheURL];
-        NSError *fetchError = [NImageFetchError errorWithCode:NImageFetchOtherError url:request.urlRequest.URL underlyingError:nil];
+        NSError *fetchError = [NImageFetchError errorWithCode:NImageFetchOtherError url:request.urlRequest.URL underlyingError:nil statusCode:nil];
         [self callAsyncCompletionForImageFetchTask:imageFetchTask image:nil error:fetchError];
     }
 }
