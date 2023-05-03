@@ -5,8 +5,8 @@ import UIKit
 
 final class NMAImageFetchTests: XCTestCase {
 
-    override class func setUp() {
-        ImageFetch().purgeCaches()
+    override func setUp() async throws {
+        await ImageFetch().purgeCaches()
     }
 
     func testPNGLoading() throws {

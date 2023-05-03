@@ -73,7 +73,7 @@ NS_SWIFT_NAME(ImageFetch)
 
 - (void)deactivateMemoryCache;
 
-- (void)purgeCaches;
+- (void)purgeCachesWithCompletion:(void (^)(void))completion;
 
 @end
 
