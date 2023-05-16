@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)removeFileAtURL:(NSURL *)URL;
 
-- (void)purgeCache;
+- (void)purgeCacheWithCompletion:(void (^)(void))completion;
 
 @end
 

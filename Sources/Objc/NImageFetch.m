@@ -198,12 +198,12 @@ didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
     return [self fetchImageForRequest:request completion:completion];
 }
 
-- (void)purgeCaches
+- (void)purgeCachesWithCompletion:(void (^)(void))completion
 {
     if(!self.isMemoryCacheDeactivated) {
         self.memoryCache = [[NImageFetchMemoryCache alloc] init];
     }
-    [self.fileCache purgeCache];
+    [self.fileCache purgeCacheWithCompletion:completion];
 }
 
 #pragma mark - Private methods

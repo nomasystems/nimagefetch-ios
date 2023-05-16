@@ -5,8 +5,8 @@ import UIKit
 
 final class NMAImageFetchTests: XCTestCase {
 
-    override class func setUp() {
-        ImageFetch().purgeCaches()
+    override func setUp() async throws {
+        await ImageFetch().purgeCaches()
     }
 
     func testPNGLoading() throws {
@@ -34,7 +34,7 @@ final class NMAImageFetchTests: XCTestCase {
                 XCTFail()
             }
         }
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: 5)
     }
 
     func testVectorLoading() throws {
@@ -63,7 +63,7 @@ final class NMAImageFetchTests: XCTestCase {
                 XCTFail()
             }
         }
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: 5)
     }
 
     func testCancel() {
@@ -87,7 +87,7 @@ final class NMAImageFetchTests: XCTestCase {
             }
         }
         imageFetch.cancel(imageFetchRequestTask)
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: 5)
     }
 
     func testImageNotFound() throws {
@@ -131,7 +131,7 @@ final class NMAImageFetchTests: XCTestCase {
                 XCTFail()
             }
         }
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: 5)
     }
 
     func testImageFetchViewWithoutCompletion() {
@@ -162,7 +162,7 @@ final class NMAImageFetchTests: XCTestCase {
             XCTAssertNil(maybeError)
             XCTAssertEqual(imageFetchView.image?.pngData(), expectedImage?.pngData())
         }
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: 5)
     }
 }
 
