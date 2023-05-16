@@ -12,7 +12,7 @@
 
 * File > Swift Packages > Add Package Dependency
 * Add `https://github.com/nomasystems/nimagefetch-ios.git`
-* Select "Up to next major" with "1.0.0"
+* Select "Up to next major" with "2.0.0"
 
 ## Usage
 
@@ -57,8 +57,18 @@ if let task = task {
 
 ### Clear caches
 
+Using async/await
+
 ```swift
-ImageFetch.shared.purgeCaches()
+await ImageFetch.shared.purgeCaches()
+```
+
+Using completion closures 
+
+```swift
+await ImageFetch.shared.purgeCaches() {
+    // Called when purge finishes
+}
 ```
 
 ### SwiftUI
