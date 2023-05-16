@@ -67,10 +67,8 @@ static NSString * const CacheDirName = @"Images";
         [fileManager moveItemAtURL:self.diskCacheURL toURL:tmpURL error:nil];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
             [fileManager removeItemAtURL:tmpURL error:nil];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self createDiskCacheDirectoryIfNeeded];
-                completion();
-            });
+            [self createDiskCacheDirectoryIfNeeded];
+            completion();
         });
     }
 }
