@@ -3,6 +3,7 @@ import NMAImageFetch
 import NMAImageFetchSwift
 import UIKit
 
+@available(iOS 13, *)
 final class NMAImageFetchTests: XCTestCase {
 
     override func setUp() async throws {
