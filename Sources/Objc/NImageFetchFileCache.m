@@ -57,19 +57,21 @@ static NSString * const CacheDirName = @"Images";
 - (void)purgeCacheWithCompletion:(void (^)(void))completion
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *tmpURL = [[fileManager URLForDirectory:NSItemReplacementDirectory
+    NSURL *tmpURL = [fileManager URLForDirectory:NSItemReplacementDirectory
                                          inDomain:NSUserDomainMask
                                 appropriateForURL:self.diskCacheURL
                                            create:YES
-                                            error:nil]
-                     URLByAppendingPathComponent:[NSUUID UUID].UUIDString];
+                                            error:nil];
     if(tmpURL) {
-        [fileManager moveItemAtURL:self.diskCacheURL toURL:tmpURL error:nil];
+        NSURL *diskCacheTmpUrl = [tmpURL URLByAppendingPathComponent:[NSUUID UUID].UUIDString];
+        [fileManager moveItemAtURL:self.diskCacheURL toURL:diskCacheTmpUrl error:nil];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
             [fileManager removeItemAtURL:tmpURL error:nil];
             [self createDiskCacheDirectoryIfNeeded];
             completion();
         });
+    } else {
+        completion();
     }
 }
 
