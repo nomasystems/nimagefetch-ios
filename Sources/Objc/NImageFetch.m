@@ -32,8 +32,6 @@
 
 @end
 
-static NImageFetch *sharedInstance;
-
 @interface NImageFetch () <NSURLSessionDelegate>
 // Queue for serializing access to task NImageFetchTaskI object properties
 @property (nonatomic) dispatch_queue_t taskDispatchQueue;
@@ -53,10 +51,12 @@ static NImageFetch *sharedInstance;
 
 + (instancetype)sharedImageFetch
 {
-    if(sharedInstance == nil) {
-        sharedInstance = [[NImageFetch alloc] init];
-    }
-    return sharedInstance;
+    static NImageFetch *_shared = nil;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        _shared = [[self alloc] init];
+    });
+    return _shared;
 }
 
 - (instancetype)init
