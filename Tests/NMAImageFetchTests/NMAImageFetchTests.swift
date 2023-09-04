@@ -3,6 +3,7 @@ import NMAImageFetch
 import NMAImageFetchSwift
 import UIKit
 
+@available(iOS 13, *)
 final class NMAImageFetchTests: XCTestCase {
 
     override func setUp() async throws {
@@ -24,6 +25,7 @@ final class NMAImageFetchTests: XCTestCase {
                 XCTFail()
             }
         }
+        wait(for: [expectationWithoutCaching], timeout: 5)
         let expectationWithCaching = expectation(description: "Image request finished width caching")
         _ = imageFetch.requestImage(imageFetchRequest) { result in
             expectationWithCaching.fulfill()
@@ -34,7 +36,7 @@ final class NMAImageFetchTests: XCTestCase {
                 XCTFail()
             }
         }
-        waitForExpectations(timeout: 5)
+        wait(for: [expectationWithCaching], timeout: 5)
     }
 
     func testVectorLoading() throws {
@@ -53,6 +55,7 @@ final class NMAImageFetchTests: XCTestCase {
                 XCTFail()
             }
         }
+        wait(for: [expectationWithoutCaching], timeout: 5)
         let expectationWithCaching = expectation(description: "Image request finished with caching")
         _ = imageFetch.requestImage(imageFetchRequest) { result in
             expectationWithCaching.fulfill()
@@ -63,7 +66,7 @@ final class NMAImageFetchTests: XCTestCase {
                 XCTFail()
             }
         }
-        waitForExpectations(timeout: 5)
+        wait(for: [expectationWithCaching], timeout: 5)
     }
 
     func testCancel() {
