@@ -60,6 +60,8 @@ typedef void (^NImageFetchViewCompletion)(NSError * _Nullable);
                       animated:(NImageFetchViewAnimated)animated
                     completion:(nullable NImageFetchViewCompletion)completion NS_REFINED_FOR_SWIFT;;
 
++ (void)setErrorHandler:(void (^)(NSError *error))handler;
+
 /** Cancel loading (no effect if image already loaded or cancelled) */
 - (void)cancelLoading;
 
