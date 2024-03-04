@@ -11,8 +11,13 @@
 @property (nonatomic, weak) UIActivityIndicatorView *activityIndicator;
 @end
 
+static void (^errorHandler)(NSError *error) = nil;
+
 @implementation NImageFetchView
 
++ (void)setErrorHandler:(void (^)(NSError *error))handler {
+    errorHandler = [handler copy];
+}
 
 - (void)dealloc
 {
@@ -63,6 +68,9 @@
                                      }
                                      strongSelf.status = NImageFetchViewStatusNotLoaded;
                                      [strongSelf hideActivityIndicator];
+                                     if (errorHandler != nil) {
+                                         errorHandler(error);
+                                     }
                                      if (completion != nil) {
                                          completion(error);
                                      }
