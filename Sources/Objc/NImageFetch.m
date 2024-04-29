@@ -87,19 +87,18 @@
     return self;
 }
 
-#if defined(DEBUG) || defined(NOMATESTFLIGHT)
-
-/* In DEBUG mode, blindly trust any server certificate */
-
 - (void)URLSession:(NSURLSession *)session
 didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
  completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *))completionHandler
 {
-    NSURLCredential *credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
-    completionHandler(NSURLSessionAuthChallengeUseCredential, credential);
+    if (self.trustAllServerCertificates) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential,
+                          [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    } else {
+        completionHandler(NSURLSessionAuthChallengePerformDefaultHandling,
+                          nil);
+    }
 }
-
-#endif
 
 - (void)deactivateMemoryCache
 {

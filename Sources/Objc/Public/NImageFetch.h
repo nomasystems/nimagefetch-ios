@@ -62,6 +62,9 @@ NS_SWIFT_NAME(ImageFetch)
 
 @property (nonatomic, class, readonly) NImageFetch *sharedImageFetch;
 
+/// Whether to blindly trust all server certificates.
+@property (nonatomic) BOOL trustAllServerCertificates;
+
 /** Start fetching the image specified by the URL request.
  *  @param request Request to fetch
  *  @return An NImageFetchTask, or nil if the image did need to be fetched (already in cache).
