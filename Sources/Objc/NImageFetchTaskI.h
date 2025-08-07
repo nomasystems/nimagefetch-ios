@@ -2,7 +2,9 @@
 
 #import <Foundation/Foundation.h>
 
-@import Darwin.C.stdatomic;
+#if !defined(__cplusplus)
+#include <stdatomic.h>
+#endif
 
 #import "NImageFetch.h"
 

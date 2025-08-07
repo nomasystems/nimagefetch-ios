@@ -2,7 +2,6 @@
 
 @import Foundation;
 @import UIKit;
-@import Darwin.C.stdatomic;
 @import CoreServices;
 
 #import "NImageFetchError.h"
