@@ -35,6 +35,7 @@
     if (self.placeholderView.superview == self) return;
     self.placeholderView.translatesAutoresizingMaskIntoConstraints = NO;
     self.placeholderView.alpha = 1.0;
+    self.placeholderView.userInteractionEnabled = NO;
     [self addSubview:self.placeholderView];
     [NSLayoutConstraint activateConstraints:@[
         [self.placeholderView.topAnchor constraintEqualToAnchor:self.topAnchor],
