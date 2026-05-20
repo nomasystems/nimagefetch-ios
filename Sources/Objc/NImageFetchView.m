@@ -76,6 +76,7 @@
 {
     if(image == nil) {
         self.status = NImageFetchViewStatusNotLoaded;
+        [self _hidePlaceholderAnimated:NO];
         self.request = nil;
     }
     [super setImage:image];
@@ -128,7 +129,7 @@
                                      if (strongSelf.placeholderView.superview) {
                                          // With placeholder: suppress native fade-in, just fade out placeholder
                                          [strongSelf _hidePlaceholderAnimated:((flags & NImageFetchFlagSync) == 0)];
-                                     } else if(strongSelf.superview && !weakSelf.hidden &&
+                                     } else if(strongSelf.superview && !strongSelf.hidden &&
                                         ((animated == NImageFetchViewAnimatedAlways) ||
                                         ((animated == NImageFetchViewAnimatedIfAsync) &&
                                          ((flags & NImageFetchFlagSync) == 0)))) {
@@ -182,6 +183,7 @@
         [imageFetch cancel:self.imageFetchTask];
         self.imageFetchTask = nil;
         self.status = NImageFetchViewStatusNotLoaded;
+        [self _hidePlaceholderAnimated:NO];
     }
 }
 
