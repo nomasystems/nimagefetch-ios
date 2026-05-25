@@ -7,5 +7,5 @@ import UIKit
 public protocol ImageFetchPlaceholderProvider {
     /// Creates a placeholder view instance.
     /// Called once when configuring the placeholder; the view is reused across loads.
-    func makePlaceholderView() -> UIView
+    @MainActor func makePlaceholderView() -> UIView
 }
