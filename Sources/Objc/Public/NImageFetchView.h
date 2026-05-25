@@ -30,6 +30,14 @@ typedef void (^NImageFetchViewCompletion)(NSError * _Nullable);
 
 @property (readonly, nonatomic) NImageFetchViewStatus status;
 
+/// View displayed as a placeholder during image loading.
+/// Assign before calling setImage. If nil (default), no placeholder is shown.
+@property (nonatomic, strong, nullable) UIView *placeholderView;
+
+/// Duration of the placeholder fade-out animation when image loads. Default: 0.3s.
+@property (nonatomic, assign) NSTimeInterval placeholderFadeOutDuration;
+
+
 /** Asynchronously downloads the image given by the specified NImageFetchRequest and sets it to the image view.
  @param request NImageFetchRequest to fetch
  @param animated Specifies whether to fade in the image with an animation.

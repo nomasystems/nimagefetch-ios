@@ -14,6 +14,57 @@
 @implementation NImageFetchView
 
 
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        _placeholderFadeOutDuration = 0.3;
+    }
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder {
+    self = [super initWithCoder:coder];
+    if (self) {
+        _placeholderFadeOutDuration = 0.3;
+    }
+    return self;
+}
+
+- (void)_showPlaceholderIfNeeded {
+    if (!self.placeholderView) return;
+    if (self.placeholderView.superview == self) return;
+    self.placeholderView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.placeholderView.alpha = 1.0;
+    self.placeholderView.userInteractionEnabled = NO;
+    [self addSubview:self.placeholderView];
+    [NSLayoutConstraint activateConstraints:@[
+        [self.placeholderView.topAnchor constraintEqualToAnchor:self.topAnchor],
+        [self.placeholderView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+        [self.placeholderView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
+        [self.placeholderView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor]
+    ]];
+}
+
+- (void)_hidePlaceholderAnimated:(BOOL)animated {
+    UIView *placeholder = self.placeholderView;
+    if (!placeholder || !placeholder.superview) return;
+    
+    if (!animated) {
+        [placeholder removeFromSuperview];
+        return;
+    }
+    
+    [UIView animateWithDuration:self.placeholderFadeOutDuration
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+        placeholder.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        [placeholder removeFromSuperview];
+        placeholder.alpha = 1.0; // Reset for reuse
+    }];
+}
+
 - (void)dealloc
 {
     /* Do not notify delegate while deallocating */
@@ -25,6 +76,7 @@
 {
     if(image == nil) {
         self.status = NImageFetchViewStatusNotLoaded;
+        [self _hidePlaceholderAnimated:NO];
         self.request = nil;
     }
     [super setImage:image];
@@ -48,6 +100,9 @@
      loading after the new one, and override it */
     [self cancelLoading];
 
+    [self _hidePlaceholderAnimated:NO]; // Clean previous placeholder
+    [self _showPlaceholderIfNeeded];
+
     /* Save the urlRequest in order to make possible to retry the load */
     self.request = request;
 
@@ -62,6 +117,7 @@
                                          strongSelf.image = fallbackImage;
                                      }
                                      strongSelf.status = NImageFetchViewStatusNotLoaded;
+                                     [strongSelf _hidePlaceholderAnimated:NO];
                                      [strongSelf hideActivityIndicator];
                                      if (completion != nil) {
                                          completion(error);
@@ -70,7 +126,10 @@
                                      [strongSelf hideActivityIndicator];
                                      [strongSelf setImage:image];
                                      strongSelf.status = NImageFetchViewStatusLoaded;
-                                     if(strongSelf.superview && !weakSelf.hidden &&
+                                     if (strongSelf.placeholderView.superview) {
+                                         // With placeholder: suppress native fade-in, just fade out placeholder
+                                         [strongSelf _hidePlaceholderAnimated:((flags & NImageFetchFlagSync) == 0)];
+                                     } else if(strongSelf.superview && !strongSelf.hidden &&
                                         ((animated == NImageFetchViewAnimatedAlways) ||
                                         ((animated == NImageFetchViewAnimatedIfAsync) &&
                                          ((flags & NImageFetchFlagSync) == 0)))) {
@@ -95,6 +154,7 @@
         self.status = NImageFetchViewStatusLoading;
     } else {
         self.status = NImageFetchViewStatusLoaded;
+        [self _hidePlaceholderAnimated:NO]; // Sync cache hit
     }
     self.imageFetchTask = anImageFetchTask;
 }
@@ -123,6 +183,7 @@
         [imageFetch cancel:self.imageFetchTask];
         self.imageFetchTask = nil;
         self.status = NImageFetchViewStatusNotLoaded;
+        [self _hidePlaceholderAnimated:NO];
     }
 }
 
